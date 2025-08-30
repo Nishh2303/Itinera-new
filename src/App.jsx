@@ -143,6 +143,92 @@ const formatDate = (dateString) => {
   return `${day}-${month}-${year}`;
 };
 
+const getPopularDestinations = (searchTerm) => {
+  const popularDestinations = [
+    // Major Cities
+    { properties: { formatted: "Paris, France", country: "France", country_code: "fr", place_id: "paris-fr", type: "city" } },
+    { properties: { formatted: "New York, USA", country: "United States", country_code: "us", place_id: "nyc-us", type: "city" } },
+    { properties: { formatted: "London, UK", country: "United Kingdom", country_code: "gb", place_id: "london-gb", type: "city" } },
+    { properties: { formatted: "Tokyo, Japan", country: "Japan", country_code: "jp", place_id: "tokyo-jp", type: "city" } },
+    { properties: { formatted: "Barcelona, Spain", country: "Spain", country_code: "es", place_id: "barcelona-es", type: "city" } },
+    { properties: { formatted: "Rome, Italy", country: "Italy", country_code: "it", place_id: "rome-it", type: "city" } },
+    { properties: { formatted: "Amsterdam, Netherlands", country: "Netherlands", country_code: "nl", place_id: "amsterdam-nl", type: "city" } },
+    { properties: { formatted: "Prague, Czech Republic", country: "Czech Republic", country_code: "cz", place_id: "prague-cz", type: "city" } },
+    { properties: { formatted: "Vienna, Austria", country: "Austria", country_code: "at", place_id: "vienna-at", type: "city" } },
+    { properties: { formatted: "Budapest, Hungary", country: "Hungary", country_code: "hu", place_id: "budapest-hu", type: "city" } },
+    
+    // Specific Areas & Neighborhoods
+    { properties: { formatted: "Montmartre, Paris", country: "France", country_code: "fr", place_id: "montmartre-paris", type: "neighbourhood" } },
+    { properties: { formatted: "Soho, London", country: "United Kingdom", country_code: "gb", place_id: "soho-london", type: "neighbourhood" } },
+    { properties: { formatted: "Times Square, New York", country: "United States", country_code: "us", place_id: "times-square-nyc", type: "neighbourhood" } },
+    { properties: { formatted: "Shibuya, Tokyo", country: "Japan", country_code: "jp", place_id: "shibuya-tokyo", type: "neighbourhood" } },
+    { properties: { formatted: "Gothic Quarter, Barcelona", country: "Spain", country_code: "es", place_id: "gothic-quarter-barcelona", type: "neighbourhood" } },
+    { properties: { formatted: "Trastevere, Rome", country: "Italy", country_code: "it", place_id: "trastevere-rome", type: "neighbourhood" } },
+    { properties: { formatted: "Jordaan, Amsterdam", country: "Netherlands", country_code: "nl", place_id: "jordaan-amsterdam", type: "neighbourhood" } },
+    { properties: { formatted: "Old Town, Prague", country: "Czech Republic", country_code: "cz", place_id: "old-town-prague", type: "neighbourhood" } },
+    { properties: { formatted: "Innere Stadt, Vienna", country: "Austria", country_code: "at", place_id: "innere-stadt-vienna", type: "neighbourhood" } },
+    { properties: { formatted: "Castle District, Budapest", country: "Hungary", country_code: "hu", place_id: "castle-district-budapest", type: "neighbourhood" } },
+    
+    // Tourist Areas & Landmarks
+    { properties: { formatted: "Eiffel Tower Area, Paris", country: "France", country_code: "fr", place_id: "eiffel-tower-paris", type: "tourism" } },
+    { properties: { formatted: "Louvre Museum Area, Paris", country: "France", country_code: "fr", place_id: "louvre-paris", type: "tourism" } },
+    { properties: { formatted: "Central Park, New York", country: "United States", country_code: "us", place_id: "central-park-nyc", type: "tourism" } },
+    { properties: { formatted: "Big Ben Area, London", country: "United Kingdom", country_code: "gb", place_id: "big-ben-london", type: "tourism" } },
+    { properties: { formatted: "Senso-ji Temple, Tokyo", country: "Japan", country_code: "jp", place_id: "sensoji-tokyo", type: "tourism" } },
+    { properties: { formatted: "Sagrada Familia, Barcelona", country: "Spain", country_code: "es", place_id: "sagrada-familia-barcelona", type: "tourism" } },
+    { properties: { formatted: "Colosseum Area, Rome", country: "Italy", country_code: "it", place_id: "colosseum-rome", type: "tourism" } },
+    { properties: { formatted: "Anne Frank House, Amsterdam", country: "Netherlands", country_code: "nl", place_id: "anne-frank-amsterdam", type: "tourism" } },
+    { properties: { formatted: "Charles Bridge, Prague", country: "Czech Republic", country_code: "cz", place_id: "charles-bridge-prague", type: "tourism" } },
+    { properties: { formatted: "Schönbrunn Palace, Vienna", country: "Austria", country_code: "at", place_id: "schonbrunn-vienna", type: "tourism" } },
+    { properties: { formatted: "Fisherman's Bastion, Budapest", country: "Hungary", country_code: "hu", place_id: "fishermans-bastion-budapest", type: "tourism" } },
+    
+    // Beach & Nature Destinations
+    { properties: { formatted: "Santorini, Greece", country: "Greece", country_code: "gr", place_id: "santorini-gr", type: "city" } },
+    { properties: { formatted: "Bali, Indonesia", country: "Indonesia", country_code: "id", place_id: "bali-id", type: "city" } },
+    { properties: { formatted: "Maldives", country: "Maldives", country_code: "mv", place_id: "maldives-mv", type: "city" } },
+    { properties: { formatted: "Phuket, Thailand", country: "Thailand", country_code: "th", place_id: "phuket-th", type: "city" } },
+    { properties: { formatted: "Swiss Alps", country: "Switzerland", country_code: "ch", place_id: "swiss-alps-ch", type: "tourism" } },
+    { properties: { formatted: "Banff National Park, Canada", country: "Canada", country_code: "ca", place_id: "banff-ca", type: "tourism" } },
+    { properties: { formatted: "Yosemite National Park, USA", country: "United States", country_code: "us", place_id: "yosemite-us", type: "tourism" } },
+    { properties: { formatted: "Machu Picchu, Peru", country: "Peru", country_code: "pe", place_id: "machu-picchu-pe", type: "tourism" } },
+    { properties: { formatted: "Petra, Jordan", country: "Jordan", country_code: "jo", place_id: "petra-jo", type: "tourism" } },
+    
+    // Cultural & Historical
+    { properties: { formatted: "Kyoto, Japan", country: "Japan", country_code: "jp", place_id: "kyoto-jp", type: "city" } },
+    { properties: { formatted: "Florence, Italy", country: "Italy", country_code: "it", place_id: "florence-it", type: "city" } },
+    { properties: { formatted: "Venice, Italy", country: "Italy", country_code: "it", place_id: "venice-it", type: "city" } },
+    { properties: { formatted: "Seville, Spain", country: "Spain", country_code: "es", place_id: "seville-es", type: "city" } },
+    { properties: { formatted: "Salzburg, Austria", country: "Austria", country_code: "at", place_id: "salzburg-at", type: "city" } },
+    { properties: { formatted: "Krakow, Poland", country: "Poland", country_code: "pl", place_id: "krakow-pl", type: "city" } },
+    { properties: { formatted: "Dubrovnik, Croatia", country: "Croatia", country_code: "hr", place_id: "dubrovnik-hr", type: "city" } },
+    { properties: { formatted: "Taj Mahal, India", country: "India", country_code: "in", place_id: "taj-mahal-in", type: "tourism" } },
+    { properties: { formatted: "Angkor Wat, Cambodia", country: "Cambodia", country_code: "kh", place_id: "angkor-wat-kh", type: "tourism" } },
+    { properties: { formatted: "Great Wall of China", country: "China", country_code: "cn", place_id: "great-wall-cn", type: "tourism" } },
+    
+    // Modern Cities
+    { properties: { formatted: "Singapore", country: "Singapore", country_code: "sg", place_id: "singapore-sg", type: "city" } },
+    { properties: { formatted: "Dubai, UAE", country: "United Arab Emirates", country_code: "ae", place_id: "dubai-ae", type: "city" } },
+    { properties: { formatted: "Hong Kong", country: "Hong Kong", country_code: "hk", place_id: "hong-kong-hk", type: "city" } },
+    { properties: { formatted: "Seoul, South Korea", country: "South Korea", country_code: "kr", place_id: "seoul-kr", type: "city" } },
+    { properties: { formatted: "Sydney, Australia", country: "Australia", country_code: "au", place_id: "sydney-au", type: "city" } },
+    { properties: { formatted: "Cape Town, South Africa", country: "South Africa", country_code: "za", place_id: "cape-town-za", type: "city" } },
+    { properties: { formatted: "Rio de Janeiro, Brazil", country: "Brazil", country_code: "br", place_id: "rio-br", type: "city" } },
+    { properties: { formatted: "Mexico City, Mexico", country: "Mexico", country_code: "mx", place_id: "mexico-city-mx", type: "city" } },
+    { properties: { formatted: "Buenos Aires, Argentina", country: "Argentina", country_code: "ar", place_id: "buenos-aires-ar", type: "city" } },
+    { properties: { formatted: "Lima, Peru", country: "Peru", country_code: "pe", place_id: "lima-pe", type: "city" } }
+  ];
+
+  if (!searchTerm) return popularDestinations.slice(0, 10);
+  
+  const searchLower = searchTerm.toLowerCase();
+  return popularDestinations
+    .filter(dest => 
+      dest.properties.formatted.toLowerCase().includes(searchLower) ||
+      dest.properties.country.toLowerCase().includes(searchLower)
+    )
+    .slice(0, 8);
+};
+
 const useClickOutside = (ref, handler) => {
   useEffect(() => {
     const listener = (event) => {
@@ -503,25 +589,36 @@ const PlannerPage = () => {
     setToday(now.toISOString().split("T")[0]);
   }, []);
   useEffect(() => {
-    if (destination.length < 3) {
+    if (destination.length < 2) {
       setSuggestions([]);
       return;
     }
     const handler = setTimeout(async () => {
       setIsTyping(true);
+      console.log("🔍 Searching for:", destination);
       try {
+        // Comprehensive search for autocomplete - search all types of places
         const res = await fetch(
-          `https://api.geoapify.com/v1/geocode/autocomplete?text=${destination}&type=city&apiKey=${GEOAPIFY_API_KEY}`
+          `https://api.geoapify.com/v1/geocode/autocomplete?text=${destination}&apiKey=${GEOAPIFY_API_KEY}&limit=20&format=json&lang=en`
         );
         const data = await res.json();
-        setSuggestions(data.features || []);
+        console.log("📡 API Response:", data);
+        
+        // Use only API results for autocomplete
+        let enhancedSuggestions = data.features || [];
+        
+        console.log("✅ Final suggestions:", enhancedSuggestions);
+        setSuggestions(enhancedSuggestions);
         setHighlightedIndex(-1);
       } catch (err) {
-        console.error("Geoapify error:", err);
+        console.error("❌ Geoapify error:", err);
+        // Fallback to empty array if API fails
+        console.log("🔄 API failed, no suggestions available");
+        setSuggestions([]);
       } finally {
         setIsTyping(false);
       }
-    }, 500);
+    }, 200);
     return () => clearTimeout(handler);
   }, [destination]);
 
@@ -560,34 +657,95 @@ const PlannerPage = () => {
     : "";
 
   const callGeminiAPI = async (query) => {
-    const systemPrompt = `You are Itinera, a world-class travel expert AI. Your primary goal is to create three distinct, practical, and inspiring travel itinerary options based on a single user request. You must strictly adhere to all user inputs, especially the total budget. For the given destination, budget, and preferences, you will generate three itinerary variations: 'Balanced', 'Luxury Stay', and 'Explorer'. 1. **Balanced Itinerary**: This should be a well-rounded plan. Allocate the budget for mid-range accommodations and a mix of paid attractions and free activities. Dining should include both popular restaurants and local eateries. 2. **Luxury Stay Itinerary**: This plan prioritizes comfort. Allocate a larger portion of the budget to high-end accommodation (4-5 star hotels, boutique hotels). The pacing should be more relaxed, with comfortable travel arrangements (e.g., taxis over public transport) and perhaps one or two premium experiences like fine dining or a private tour. 3. **Explorer Itinerary**: This plan prioritizes experiences over comfort. Allocate the budget towards more activities, tours, and exploration. Accommodation should be budget-friendly (e.g., hostels, budget hotels, guesthouses). Emphasize local transport, street food, and unique, possibly off-the-beaten-path activities. **Key Instructions**: - **Budgeting is CRITICAL**: The *total cost* for each of the three plans should still be within the user's single specified budget. You are reallocating the same budget, not creating three different budgets. - **Logic & Pacing**: All itineraries must have geographically logical routing to minimize travel time and a balanced pace. - **Output Format**: You MUST respond ONLY with a valid JSON object. Do not include any text, explanation, or markdown formatting before or after the JSON. The JSON schema is: {"itinerary_options": [{"type": "Balanced" | "Luxury Stay" | "Explorer", "summary": "A brief, one-sentence summary of this itinerary style.", "itinerary": [{"day": "number", "theme": "string", "morning": {"activity": "string", "description": "string"}, "afternoon": {"activity": "string", "description": "string"}, "evening": {"activity": "string", "description": "string"}, "food": {"lunch": "string", "dinner": "string"}}], "accommodation_suggestions": [{"name": "string", "type": "string", "description": "string"}]}]}`;
+    const systemPrompt = `You are Itinera, a travel planning AI. Create three distinct travel itinerary options: 'Balanced', 'Luxury Stay', and 'Explorer' for the given destination, budget, and preferences.
+
+IMPORTANT: Respond ONLY with valid JSON. No text before or after the JSON.
+
+JSON Schema:
+{
+  "itinerary_options": [
+    {
+      "type": "Balanced|Luxury Stay|Explorer",
+      "summary": "Brief description of this itinerary style",
+      "itinerary": [
+        {
+          "day": 1,
+          "theme": "Day theme",
+          "morning": {
+            "activity": "Activity name",
+            "description": "Brief description"
+          },
+          "afternoon": {
+            "activity": "Activity name", 
+            "description": "Brief description"
+          },
+          "evening": {
+            "activity": "Activity name",
+            "description": "Brief description"
+          },
+          "food": {
+            "lunch": "Lunch suggestion",
+            "dinner": "Dinner suggestion"
+          }
+        }
+      ],
+      "accommodation_suggestions": [
+        {
+          "name": "Hotel name",
+          "type": "Hotel type",
+          "description": "Brief description"
+        }
+      ]
+    }
+  ]
+}`;
 
     try {
-      const apiKey = "";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("Gemini API key is not configured. Please add VITE_GEMINI_API_KEY to your environment variables.");
+      }
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
       const payload = {
         contents: [{ parts: [{ text: query }] }],
         systemInstruction: { parts: [{ text: systemPrompt }] },
-        generationConfig: { responseMimeType: "application/json" },
+        generationConfig: { 
+          responseMimeType: "application/json",
+          temperature: 0.7,
+          maxOutputTokens: 4000
+        },
       };
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!response.ok)
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+      }
       const result = await response.json();
       const candidate = result.candidates?.[0];
       if (candidate?.content?.parts?.[0]?.text) {
-        return JSON.parse(candidate.content.parts[0].text);
+        try {
+          const parsedResponse = JSON.parse(candidate.content.parts[0].text);
+          if (parsedResponse && parsedResponse.itinerary_options) {
+            return parsedResponse;
+          } else {
+            throw new Error("Invalid response structure from AI");
+          }
+        } catch (parseError) {
+          console.error("JSON Parse Error:", parseError);
+          console.error("Raw response:", candidate.content.parts[0].text);
+          throw new Error("Failed to parse itinerary from AI response. The AI may have returned invalid JSON.");
+        }
       } else {
+        console.error("Unexpected API response structure:", result);
         throw new Error("Failed to parse itinerary from AI response.");
       }
     } catch (err) {
-      setError(err.message || "An unknown error occurred.");
-    } finally {
-      setLoading(false);
+      console.error("API Error:", err);
+      throw err; // Re-throw the error so it can be handled by the caller
     }
   };
 
@@ -638,13 +796,23 @@ const PlannerPage = () => {
 
     setOriginalUserQuery(userQuery);
 
-    const parsedItinerary = await callGeminiAPI(userQuery);
-    if (parsedItinerary && parsedItinerary.itinerary_options) {
-      setItinerary(parsedItinerary);
-    } else {
-      setError(
-        "Sorry, I couldn't create an itinerary with that request. Please try different options."
-      );
+    try {
+      console.log('🚀 Starting API call...');
+      const parsedItinerary = await callGeminiAPI(userQuery);
+      console.log('✅ API call successful:', parsedItinerary);
+      if (parsedItinerary && parsedItinerary.itinerary_options) {
+        setItinerary(parsedItinerary);
+      } else {
+        console.log('❌ Invalid response structure:', parsedItinerary);
+        setError(
+          "Sorry, I couldn't create an itinerary with that request. Please try different options."
+        );
+      }
+    } catch (error) {
+      console.error('❌ API call failed:', error);
+      setError(error.message || "Sorry, I couldn't create an itinerary with that request. Please try different options.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -669,13 +837,19 @@ The itinerary you previously generated is: ${JSON.stringify(itinerary)}.
 Now, the user wants to refine this plan with the following request: "${refinementPrompt}".
 Please generate a new, updated itinerary based on this feedback. Make sure to keep the original constraints unless the user specifies otherwise. Output ONLY the updated JSON.`;
 
-    const parsedItinerary = await callGeminiAPI(refinementQuery);
-    if (parsedItinerary && parsedItinerary.itinerary_options) {
-      setItinerary(parsedItinerary);
-    } else {
-      setError(
-        "Sorry, I couldn't refine the itinerary with that request. Please try a different modification."
-      );
+    try {
+      const parsedItinerary = await callGeminiAPI(refinementQuery);
+      if (parsedItinerary && parsedItinerary.itinerary_options) {
+        setItinerary(parsedItinerary);
+      } else {
+        setError(
+          "Sorry, I couldn't refine the itinerary with that request. Please try a different modification."
+        );
+      }
+    } catch (error) {
+      setError(error.message || "Sorry, I couldn't refine the itinerary with that request. Please try a different modification.");
+    } finally {
+      setLoading(false);
     }
     setRefinementPrompt("");
   };
@@ -711,55 +885,85 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
 
   return (
     <div className="w-full max-w-6xl z-0 flex flex-col items-center animate-fade-in">
-      <div className="w-full flex justify-center mt-8">
+      <div className="w-full flex justify-center mt-4 sm:mt-8 px-4 mb-8">
         <form
           onSubmit={handleGenerateSubmit}
-          className="w-full max-w-3xl bg-white p-6 md:p-8 rounded-3xl shadow-2xl border border-gray-200"
+          className="w-full max-w-3xl bg-white p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl border border-gray-200"
         >
-          <h2 className="text-3xl font-bold text-center mb-2 text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2 text-gray-900">
             Let's Plan Your Next Adventure
           </h2>
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base">
             Fill in the details below to get your personalized AI-powered
             itinerary.
           </p>
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div className="relative group" ref={suggestionsRef}>
-              <label className="absolute -top-2 left-4 px-2 bg-white text-gray-500 text-xs font-semibold z-10 group-focus-within:text-purple-500 transition-colors duration-300 ease-in-out">
+              <label className="absolute -top-2 left-4 px-2 bg-white text-gray-600 text-xs font-bold z-30 group-focus-within:text-purple-500 transition-colors duration-300 ease-in-out shadow-sm">
                 Destination*
               </label>
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple-500 transition-colors duration-300 ease-in-out" />
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-purple-500 transition-colors duration-300 ease-in-out w-5 h-5 z-20" />
               <input
                 type="text"
                 placeholder="e.g., Paris, France"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-white text-gray-900 placeholder:text-gray-400 border-2 border-gray-200 focus:border-purple-500 focus:ring-0 rounded-xl py-2.5 pl-12 pr-4 transition-all duration-300 ease-in-out"
+
+                className="relative z-10 w-full bg-gray-50 text-gray-900 placeholder:text-gray-500 border-2 border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-0 rounded-xl py-3 pl-12 pr-4 transition-all duration-300 ease-in-out text-base font-medium hover:border-gray-400"
               />
-              {(suggestions.length > 0 || isTyping) && (
-                <div className="absolute top-full mt-2 w-full bg-white/80 backdrop-blur-xl border border-gray-200 rounded-xl shadow-lg z-20 max-h-60 overflow-y-auto">
+
+                              {(suggestions.length > 0 || isTyping) && (
+                <div className="absolute top-full mt-2 left-0 right-0 bg-white/95 backdrop-blur-xl border-2 border-purple-100 rounded-xl shadow-2xl z-20 max-h-60 overflow-y-auto animate-fade-in-up">
                   {isTyping && (
-                    <div className="text-gray-500 px-4 py-2">Searching...</div>
-                  )}
-                  {!isTyping &&
-                    suggestions.map((s, i) => (
-                      <div
-                        key={s.properties.place_id}
-                        ref={(el) => (suggestionRefs.current[i] = el)}
-                        onClick={() => handleSuggestionClick(s)}
-                        className={`px-4 py-3 text-gray-900 hover:bg-gray-100 cursor-pointer transition-colors duration-200 border-b border-gray-200 last:border-b-0 flex items-center gap-3 ${
-                          i === highlightedIndex ? "bg-gray-100" : ""
-                        }`}
-                      >
-                        <img
-                          src={getCountryFlagUrl(s.properties.country_code)}
-                          alt={s.properties.country}
-                          className="w-6 h-auto rounded-sm flex-shrink-0"
-                        />
-                        <span>{s.properties.formatted}</span>
+                    <div className="text-gray-500 px-4 py-3 text-center text-sm">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500"></div>
+                        Searching destinations...
                       </div>
-                    ))}
+                    </div>
+                  )}
+                  {!isTyping && suggestions.length > 0 && (
+                    <div className="py-1">
+                      {suggestions.map((s, i) => (
+                        <div
+                          key={s.properties.place_id}
+                          ref={(el) => (suggestionRefs.current[i] = el)}
+                          onClick={() => handleSuggestionClick(s)}
+                          className={`px-4 py-3 text-gray-900 hover:bg-purple-50 cursor-pointer transition-all duration-200 border-b border-gray-100 last:border-b-0 flex items-center gap-3 ${
+                            i === highlightedIndex ? "bg-purple-50 border-l-4 border-l-purple-500" : ""
+                          }`}
+                        >
+                          <img
+                            src={getCountryFlagUrl(s.properties.country_code)}
+                            alt={s.properties.country}
+                            className="w-5 h-auto rounded-sm flex-shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-gray-900 truncate">
+                              {s.properties.formatted}
+                            </div>
+                            {s.properties.type && (
+                              <div className="text-xs text-gray-500 capitalize">
+                                {s.properties.type.replace('_', ' ')}
+                              </div>
+                            )}
+                          </div>
+                          {i === highlightedIndex && (
+                            <div className="text-purple-500">
+                              <ArrowRight className="w-4 h-4" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {!isTyping && suggestions.length === 0 && destination.length > 0 && (
+                    <div className="text-gray-500 px-4 py-3 text-center text-sm">
+                      No destinations found. Try a different search term.
+                    </div>
+                  )}
+                  
                 </div>
               )}
             </div>
@@ -874,18 +1078,19 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
           </div>
         </form>
       </div>
-      <div ref={resultsRef} className="w-full">
+      <div ref={resultsRef} className="w-full flex justify-center px-4">
+        <div className="w-full max-w-3xl">
         <ErrorDisplay message={error} />
         {loading && <LoadingSkeleton />}
         {itinerary && (
           <ItineraryDisplay data={itinerary} destination={destination} />
         )}
         {itinerary && !loading && (
-          <div className="w-full max-w-4xl mx-auto mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-200 animate-fade-in-up">
-            <h3 className="text-2xl font-bold text-center mb-4">
+          <div className="w-full mt-8 sm:mt-12 p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-200 animate-fade-in-up">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">
               Want to make some changes?
             </h3>
-            <p className="text-center text-gray-600 mb-6">
+            <p className="text-center text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               Let me know what you'd like to adjust, and I'll create a new
               version for you!
             </p>
@@ -894,22 +1099,23 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
                 placeholder="e.g., 'Can you replace the museum on Day 2 with a hiking trail?' or 'Add more budget-friendly food options.'"
                 value={refinementPrompt}
                 onChange={(e) => setRefinementPrompt(e.target.value)}
-                className="w-full bg-white text-gray-900 placeholder-gray-400 border-2 border-gray-200 focus:border-purple-500 focus:ring-0 rounded-2xl py-3 px-4 h-24 resize-none transition-all duration-300 ease-in-out"
+                className="w-full bg-white text-gray-900 placeholder-gray-400 border-2 border-gray-200 focus:border-purple-500 focus:ring-0 rounded-2xl py-3 px-4 h-24 resize-none transition-all duration-300 ease-in-out text-sm sm:text-base"
               />
             </div>
             <button
               onClick={refineItinerary}
               disabled={loading}
-              className={`mt-4 w-full text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg ${
+              className={`mt-4 w-full text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-base sm:text-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-xl hover:shadow-emerald-500/30"
               }`}
             >
-              <Sparkles /> Refine My Itinerary
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" /> Refine My Itinerary
             </button>
           </div>
         )}
+        </div>
       </div>
     </div>
   );
@@ -1016,7 +1222,7 @@ const ContactPage = () => (
 
 const ErrorDisplay = ({ message }) =>
   message && (
-    <div className="w-full max-w-4xl mt-8 bg-red-500/10 border border-red-500/20 text-red-800 p-4 rounded-xl flex items-center gap-4 animate-fade-in-up">
+    <div className="w-full mt-8 bg-red-500/10 border border-red-500/20 text-red-800 p-4 rounded-xl flex items-center gap-4 animate-fade-in-up">
       <ServerCrash className="w-8 h-8 text-red-600 flex-shrink-0" />
       <div>
         <h3 className="font-bold">Oops!</h3>
@@ -1025,7 +1231,7 @@ const ErrorDisplay = ({ message }) =>
     </div>
   );
 const LoadingSkeleton = () => (
-  <div className="w-full max-w-4xl mt-8 animate-pulse">
+  <div className="w-full mt-8 animate-pulse">
     <div className="h-10 bg-gray-300 rounded-lg w-1/2 mb-6"></div>
     <div className="space-y-6">
       {[...Array(3)].map((_, i) => (
@@ -1049,13 +1255,13 @@ const ItineraryDisplay = ({ data, destination }) => {
   const activeItinerary = data.itinerary_options[activeTab];
 
   return (
-    <div className="w-full max-w-4xl mt-8 text-gray-900 animate-fade-in">
-      <div id="pdf-content" className="bg-gray-100 p-4 sm:p-6">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-center text-gray-900 opacity-0 animate-fade-in-up">
+    <div className="w-full mt-4 sm:mt-6 text-gray-900 animate-fade-in">
+      <div id="pdf-content" className="bg-white p-3 sm:p-4 md:p-6 rounded-2xl shadow-lg border border-gray-200">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-center text-gray-900 opacity-0 animate-fade-in-up">
           Your Trip to {destination}!
         </h2>
         <p
-          className="text-center text-lg text-gray-600 mb-8 opacity-0 animate-fade-in-up"
+          className="text-center text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 opacity-0 animate-fade-in-up"
           style={{ animationDelay: "100ms" }}
         >
           Here are a few options based on your preferences. Select a tab to view
@@ -1063,14 +1269,14 @@ const ItineraryDisplay = ({ data, destination }) => {
         </p>
 
         <div
-          className="flex justify-center mb-8 border-b border-gray-200 opacity-0 animate-fade-in-up"
+          className="flex justify-center mb-6 sm:mb-8 border-b border-gray-200 opacity-0 animate-fade-in-up overflow-x-auto"
           style={{ animationDelay: "200ms" }}
         >
           {data.itinerary_options.map((option, index) => (
             <button
               key={option.type}
               onClick={() => setActiveTab(index)}
-              className={`px-6 py-3 text-lg font-semibold transition-all duration-300 ease-in-out relative ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-lg font-semibold transition-all duration-300 ease-in-out relative whitespace-nowrap ${
                 activeTab === index
                   ? "text-purple-500"
                   : "text-gray-500 hover:text-gray-900"
@@ -1088,28 +1294,28 @@ const ItineraryDisplay = ({ data, destination }) => {
           className="opacity-0 animate-fade-in-up"
           style={{ animationDelay: "300ms" }}
         >
-          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-8">
-            <h3 className="text-2xl font-bold text-center text-gray-900">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-200 mb-6 sm:mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold text-center text-gray-900">
               {activeItinerary.type} Plan
             </h3>
-            <p className="text-center text-gray-600 mt-1">
+            <p className="text-center text-gray-600 mt-1 text-sm sm:text-base">
               {activeItinerary.summary}
             </p>
           </div>
-          <div className="space-y-8 mt-8">
+          <div className="space-y-6 sm:space-y-8 mt-6 sm:mt-8">
             {activeItinerary.itinerary?.map((day, i) => (
               <div
                 key={day.day}
-                className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 transition-all duration-300 ease-in-out hover:border-purple-500/50 hover:shadow-2xl opacity-0 animate-fade-in-up"
+                className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-200 transition-all duration-300 ease-in-out hover:border-purple-500/50 hover:shadow-2xl opacity-0 animate-fade-in-up"
                 style={{ animationDelay: `${400 + i * 100}ms` }}
               >
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
                   Day {day.day}:{" "}
                   <span className="font-semibold text-gray-600">
                     {day.theme}
                   </span>
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <ActivityCard
                     time="Morning"
                     details={day.morning}
@@ -1131,23 +1337,23 @@ const ItineraryDisplay = ({ data, destination }) => {
             ))}
           </div>
           <div
-            className="mt-12 opacity-0 animate-fade-in-up"
+            className="mt-8 sm:mt-12 opacity-0 animate-fade-in-up"
             style={{
               animationDelay: `${
                 400 + (activeItinerary.itinerary?.length || 0) * 100
               }ms`,
             }}
           >
-            <h3 className="text-2xl sm:text-3xl font-bold mb-6 text-center flex items-center justify-center gap-3">
-              <Hotel /> Accommodation Ideas
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-center flex items-center justify-center gap-2 sm:gap-3">
+              <Hotel className="w-5 h-5 sm:w-6 sm:h-6" /> Accommodation Ideas
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {activeItinerary.accommodation_suggestions?.map((hotel) => (
                 <div
                   key={hotel.name}
-                  className="bg-white p-5 rounded-2xl border border-gray-200 transform hover:-translate-y-1 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl"
+                  className="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 transform hover:-translate-y-1 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl"
                 >
-                  <h4 className="font-bold text-lg text-gray-900">
+                  <h4 className="font-bold text-base sm:text-lg text-gray-900">
                     {hotel.name}
                   </h4>
                   <p className="text-sm font-semibold text-gray-600 mb-2">
@@ -1167,15 +1373,15 @@ const ItineraryDisplay = ({ data, destination }) => {
 const ActivityCard = ({ time, details, icon }) => {
   if (!details || !details.activity) return null;
   return (
-    <div className="flex items-start gap-4">
-      <div className={`${iconColorMap[time]} p-2 rounded-full mt-1`}>
-        {React.cloneElement(icon, { className: "w-5 h-5" })}
+    <div className="flex items-start gap-3 sm:gap-4">
+      <div className={`${iconColorMap[time]} p-2 rounded-full mt-1 flex-shrink-0`}>
+        {React.cloneElement(icon, { className: "w-4 h-4 sm:w-5 sm:h-5" })}
       </div>
-      <div>
-        <p className="font-semibold text-lg text-gray-900">
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold text-base sm:text-lg text-gray-900">
           {time}: <span className="font-bold">{details.activity}</span>
         </p>
-        <p className="text-gray-600 text-sm">{details.description}</p>
+        <p className="text-gray-600 text-sm mt-1">{details.description}</p>
       </div>
     </div>
   );
@@ -1183,19 +1389,19 @@ const ActivityCard = ({ time, details, icon }) => {
 const FoodCard = ({ details }) => {
   if (!details || (!details.lunch && !details.dinner)) return null;
   return (
-    <div className="border-t border-gray-200 pt-4 mt-4 flex items-start gap-4">
-      <div className={`${iconColorMap["Food"]} p-2 rounded-full mt-1`}>
-        <Utensils className="w-5 h-5" />
+    <div className="border-t border-gray-200 pt-3 sm:pt-4 mt-3 sm:mt-4 flex items-start gap-3 sm:gap-4">
+      <div className={`${iconColorMap["Food"]} p-2 rounded-full mt-1 flex-shrink-0`}>
+        <Utensils className="w-4 h-4 sm:w-5 sm:h-5" />
       </div>
-      <div>
+      <div className="min-w-0 flex-1">
         {details.lunch && (
-          <p className="font-semibold text-gray-900">
+          <p className="font-semibold text-gray-900 text-sm sm:text-base">
             Lunch:{" "}
             <span className="font-normal text-gray-600">{details.lunch}</span>
           </p>
         )}
         {details.dinner && (
-          <p className="font-semibold text-gray-900">
+          <p className="font-semibold text-gray-900 text-sm sm:text-base mt-1">
             Dinner:{" "}
             <span className="font-normal text-gray-600">{details.dinner}</span>
           </p>
@@ -1246,21 +1452,21 @@ const App = () => {
       <StyleInjector />
       <main className="min-h-screen w-full bg-gray-100 text-gray-900 font-sans flex flex-col items-center overflow-x-hidden">
         <nav className="w-full z-10 bg-white/80 backdrop-blur-xl border-b border-gray-200 flex justify-center sticky top-0 transition-all duration-300 ease-in-out">
-          <div className="w-full max-w-7xl flex justify-between items-center p-4">
+          <div className="w-full max-w-7xl flex justify-between items-center p-3 sm:p-4">
             <div
-              className="flex items-center cursor-pointer gap-3"
+              className="flex items-center cursor-pointer gap-2 sm:gap-3"
               onClick={() => setCurrentPage("home")}
             >
               <img
                 src="https://i.ibb.co/mrh1SqNb/Chat-GPT-Image-Aug-30-2025-01-01-05-AM.png"
                 alt="Itinera Logo"
-                className="h-14 w-auto transition-transform duration-300 ease-in-out hover:scale-110"
+                className="h-10 sm:h-14 w-auto transition-transform duration-300 ease-in-out hover:scale-110"
               />
-              <span className="text-3xl font-bold text-gray-900 tracking-wider">
+              <span className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-wider">
                 Itinera
               </span>
             </div>
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3 sm:gap-4">
               <NavLink page="home">Home</NavLink>
               <NavLink page="planner">Planner</NavLink>
               <NavLink page="business">For Business</NavLink>
@@ -1274,7 +1480,7 @@ const App = () => {
             </button>
           </div>
         </nav>
-        <div className="w-full max-w-7xl z-0 p-4 sm:p-6">{renderPage()}</div>
+        <div className="w-full max-w-7xl z-0 p-3 sm:p-4 md:p-6">{renderPage()}</div>
         <footer className="w-full max-w-7xl mt-auto pt-10 pb-4 text-center text-gray-600 border-t border-gray-200 z-10 text-sm">
           <p>&copy; {new Date().getFullYear()} Itinera. All rights reserved.</p>
           <p>Powered by AI, built for adventure.</p>
