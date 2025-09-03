@@ -146,87 +146,575 @@ const formatDate = (dateString) => {
 const getPopularDestinations = (searchTerm) => {
   const popularDestinations = [
     // Major Cities
-    { properties: { formatted: "Paris, France", country: "France", country_code: "fr", place_id: "paris-fr", type: "city" } },
-    { properties: { formatted: "New York, USA", country: "United States", country_code: "us", place_id: "nyc-us", type: "city" } },
-    { properties: { formatted: "London, UK", country: "United Kingdom", country_code: "gb", place_id: "london-gb", type: "city" } },
-    { properties: { formatted: "Tokyo, Japan", country: "Japan", country_code: "jp", place_id: "tokyo-jp", type: "city" } },
-    { properties: { formatted: "Barcelona, Spain", country: "Spain", country_code: "es", place_id: "barcelona-es", type: "city" } },
-    { properties: { formatted: "Rome, Italy", country: "Italy", country_code: "it", place_id: "rome-it", type: "city" } },
-    { properties: { formatted: "Amsterdam, Netherlands", country: "Netherlands", country_code: "nl", place_id: "amsterdam-nl", type: "city" } },
-    { properties: { formatted: "Prague, Czech Republic", country: "Czech Republic", country_code: "cz", place_id: "prague-cz", type: "city" } },
-    { properties: { formatted: "Vienna, Austria", country: "Austria", country_code: "at", place_id: "vienna-at", type: "city" } },
-    { properties: { formatted: "Budapest, Hungary", country: "Hungary", country_code: "hu", place_id: "budapest-hu", type: "city" } },
-    
+    {
+      properties: {
+        formatted: "Paris, France",
+        country: "France",
+        country_code: "fr",
+        place_id: "paris-fr",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "New York, USA",
+        country: "United States",
+        country_code: "us",
+        place_id: "nyc-us",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "London, UK",
+        country: "United Kingdom",
+        country_code: "gb",
+        place_id: "london-gb",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Tokyo, Japan",
+        country: "Japan",
+        country_code: "jp",
+        place_id: "tokyo-jp",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Barcelona, Spain",
+        country: "Spain",
+        country_code: "es",
+        place_id: "barcelona-es",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Rome, Italy",
+        country: "Italy",
+        country_code: "it",
+        place_id: "rome-it",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Amsterdam, Netherlands",
+        country: "Netherlands",
+        country_code: "nl",
+        place_id: "amsterdam-nl",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Prague, Czech Republic",
+        country: "Czech Republic",
+        country_code: "cz",
+        place_id: "prague-cz",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Vienna, Austria",
+        country: "Austria",
+        country_code: "at",
+        place_id: "vienna-at",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Budapest, Hungary",
+        country: "Hungary",
+        country_code: "hu",
+        place_id: "budapest-hu",
+        type: "city",
+      },
+    },
+
     // Specific Areas & Neighborhoods
-    { properties: { formatted: "Montmartre, Paris", country: "France", country_code: "fr", place_id: "montmartre-paris", type: "neighbourhood" } },
-    { properties: { formatted: "Soho, London", country: "United Kingdom", country_code: "gb", place_id: "soho-london", type: "neighbourhood" } },
-    { properties: { formatted: "Times Square, New York", country: "United States", country_code: "us", place_id: "times-square-nyc", type: "neighbourhood" } },
-    { properties: { formatted: "Shibuya, Tokyo", country: "Japan", country_code: "jp", place_id: "shibuya-tokyo", type: "neighbourhood" } },
-    { properties: { formatted: "Gothic Quarter, Barcelona", country: "Spain", country_code: "es", place_id: "gothic-quarter-barcelona", type: "neighbourhood" } },
-    { properties: { formatted: "Trastevere, Rome", country: "Italy", country_code: "it", place_id: "trastevere-rome", type: "neighbourhood" } },
-    { properties: { formatted: "Jordaan, Amsterdam", country: "Netherlands", country_code: "nl", place_id: "jordaan-amsterdam", type: "neighbourhood" } },
-    { properties: { formatted: "Old Town, Prague", country: "Czech Republic", country_code: "cz", place_id: "old-town-prague", type: "neighbourhood" } },
-    { properties: { formatted: "Innere Stadt, Vienna", country: "Austria", country_code: "at", place_id: "innere-stadt-vienna", type: "neighbourhood" } },
-    { properties: { formatted: "Castle District, Budapest", country: "Hungary", country_code: "hu", place_id: "castle-district-budapest", type: "neighbourhood" } },
-    
+    {
+      properties: {
+        formatted: "Montmartre, Paris",
+        country: "France",
+        country_code: "fr",
+        place_id: "montmartre-paris",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Soho, London",
+        country: "United Kingdom",
+        country_code: "gb",
+        place_id: "soho-london",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Times Square, New York",
+        country: "United States",
+        country_code: "us",
+        place_id: "times-square-nyc",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Shibuya, Tokyo",
+        country: "Japan",
+        country_code: "jp",
+        place_id: "shibuya-tokyo",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Gothic Quarter, Barcelona",
+        country: "Spain",
+        country_code: "es",
+        place_id: "gothic-quarter-barcelona",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Trastevere, Rome",
+        country: "Italy",
+        country_code: "it",
+        place_id: "trastevere-rome",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Jordaan, Amsterdam",
+        country: "Netherlands",
+        country_code: "nl",
+        place_id: "jordaan-amsterdam",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Old Town, Prague",
+        country: "Czech Republic",
+        country_code: "cz",
+        place_id: "old-town-prague",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Innere Stadt, Vienna",
+        country: "Austria",
+        country_code: "at",
+        place_id: "innere-stadt-vienna",
+        type: "neighbourhood",
+      },
+    },
+    {
+      properties: {
+        formatted: "Castle District, Budapest",
+        country: "Hungary",
+        country_code: "hu",
+        place_id: "castle-district-budapest",
+        type: "neighbourhood",
+      },
+    },
+
     // Tourist Areas & Landmarks
-    { properties: { formatted: "Eiffel Tower Area, Paris", country: "France", country_code: "fr", place_id: "eiffel-tower-paris", type: "tourism" } },
-    { properties: { formatted: "Louvre Museum Area, Paris", country: "France", country_code: "fr", place_id: "louvre-paris", type: "tourism" } },
-    { properties: { formatted: "Central Park, New York", country: "United States", country_code: "us", place_id: "central-park-nyc", type: "tourism" } },
-    { properties: { formatted: "Big Ben Area, London", country: "United Kingdom", country_code: "gb", place_id: "big-ben-london", type: "tourism" } },
-    { properties: { formatted: "Senso-ji Temple, Tokyo", country: "Japan", country_code: "jp", place_id: "sensoji-tokyo", type: "tourism" } },
-    { properties: { formatted: "Sagrada Familia, Barcelona", country: "Spain", country_code: "es", place_id: "sagrada-familia-barcelona", type: "tourism" } },
-    { properties: { formatted: "Colosseum Area, Rome", country: "Italy", country_code: "it", place_id: "colosseum-rome", type: "tourism" } },
-    { properties: { formatted: "Anne Frank House, Amsterdam", country: "Netherlands", country_code: "nl", place_id: "anne-frank-amsterdam", type: "tourism" } },
-    { properties: { formatted: "Charles Bridge, Prague", country: "Czech Republic", country_code: "cz", place_id: "charles-bridge-prague", type: "tourism" } },
-    { properties: { formatted: "Schönbrunn Palace, Vienna", country: "Austria", country_code: "at", place_id: "schonbrunn-vienna", type: "tourism" } },
-    { properties: { formatted: "Fisherman's Bastion, Budapest", country: "Hungary", country_code: "hu", place_id: "fishermans-bastion-budapest", type: "tourism" } },
-    
+    {
+      properties: {
+        formatted: "Eiffel Tower Area, Paris",
+        country: "France",
+        country_code: "fr",
+        place_id: "eiffel-tower-paris",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Louvre Museum Area, Paris",
+        country: "France",
+        country_code: "fr",
+        place_id: "louvre-paris",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Central Park, New York",
+        country: "United States",
+        country_code: "us",
+        place_id: "central-park-nyc",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Big Ben Area, London",
+        country: "United Kingdom",
+        country_code: "gb",
+        place_id: "big-ben-london",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Senso-ji Temple, Tokyo",
+        country: "Japan",
+        country_code: "jp",
+        place_id: "sensoji-tokyo",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Sagrada Familia, Barcelona",
+        country: "Spain",
+        country_code: "es",
+        place_id: "sagrada-familia-barcelona",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Colosseum Area, Rome",
+        country: "Italy",
+        country_code: "it",
+        place_id: "colosseum-rome",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Anne Frank House, Amsterdam",
+        country: "Netherlands",
+        country_code: "nl",
+        place_id: "anne-frank-amsterdam",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Charles Bridge, Prague",
+        country: "Czech Republic",
+        country_code: "cz",
+        place_id: "charles-bridge-prague",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Schönbrunn Palace, Vienna",
+        country: "Austria",
+        country_code: "at",
+        place_id: "schonbrunn-vienna",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Fisherman's Bastion, Budapest",
+        country: "Hungary",
+        country_code: "hu",
+        place_id: "fishermans-bastion-budapest",
+        type: "tourism",
+      },
+    },
+
     // Beach & Nature Destinations
-    { properties: { formatted: "Santorini, Greece", country: "Greece", country_code: "gr", place_id: "santorini-gr", type: "city" } },
-    { properties: { formatted: "Bali, Indonesia", country: "Indonesia", country_code: "id", place_id: "bali-id", type: "city" } },
-    { properties: { formatted: "Maldives", country: "Maldives", country_code: "mv", place_id: "maldives-mv", type: "city" } },
-    { properties: { formatted: "Phuket, Thailand", country: "Thailand", country_code: "th", place_id: "phuket-th", type: "city" } },
-    { properties: { formatted: "Swiss Alps", country: "Switzerland", country_code: "ch", place_id: "swiss-alps-ch", type: "tourism" } },
-    { properties: { formatted: "Banff National Park, Canada", country: "Canada", country_code: "ca", place_id: "banff-ca", type: "tourism" } },
-    { properties: { formatted: "Yosemite National Park, USA", country: "United States", country_code: "us", place_id: "yosemite-us", type: "tourism" } },
-    { properties: { formatted: "Machu Picchu, Peru", country: "Peru", country_code: "pe", place_id: "machu-picchu-pe", type: "tourism" } },
-    { properties: { formatted: "Petra, Jordan", country: "Jordan", country_code: "jo", place_id: "petra-jo", type: "tourism" } },
-    
+    {
+      properties: {
+        formatted: "Santorini, Greece",
+        country: "Greece",
+        country_code: "gr",
+        place_id: "santorini-gr",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Bali, Indonesia",
+        country: "Indonesia",
+        country_code: "id",
+        place_id: "bali-id",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Maldives",
+        country: "Maldives",
+        country_code: "mv",
+        place_id: "maldives-mv",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Phuket, Thailand",
+        country: "Thailand",
+        country_code: "th",
+        place_id: "phuket-th",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Swiss Alps",
+        country: "Switzerland",
+        country_code: "ch",
+        place_id: "swiss-alps-ch",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Banff National Park, Canada",
+        country: "Canada",
+        country_code: "ca",
+        place_id: "banff-ca",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Yosemite National Park, USA",
+        country: "United States",
+        country_code: "us",
+        place_id: "yosemite-us",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Machu Picchu, Peru",
+        country: "Peru",
+        country_code: "pe",
+        place_id: "machu-picchu-pe",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Petra, Jordan",
+        country: "Jordan",
+        country_code: "jo",
+        place_id: "petra-jo",
+        type: "tourism",
+      },
+    },
+
     // Cultural & Historical
-    { properties: { formatted: "Kyoto, Japan", country: "Japan", country_code: "jp", place_id: "kyoto-jp", type: "city" } },
-    { properties: { formatted: "Florence, Italy", country: "Italy", country_code: "it", place_id: "florence-it", type: "city" } },
-    { properties: { formatted: "Venice, Italy", country: "Italy", country_code: "it", place_id: "venice-it", type: "city" } },
-    { properties: { formatted: "Seville, Spain", country: "Spain", country_code: "es", place_id: "seville-es", type: "city" } },
-    { properties: { formatted: "Salzburg, Austria", country: "Austria", country_code: "at", place_id: "salzburg-at", type: "city" } },
-    { properties: { formatted: "Krakow, Poland", country: "Poland", country_code: "pl", place_id: "krakow-pl", type: "city" } },
-    { properties: { formatted: "Dubrovnik, Croatia", country: "Croatia", country_code: "hr", place_id: "dubrovnik-hr", type: "city" } },
-    { properties: { formatted: "Taj Mahal, India", country: "India", country_code: "in", place_id: "taj-mahal-in", type: "tourism" } },
-    { properties: { formatted: "Angkor Wat, Cambodia", country: "Cambodia", country_code: "kh", place_id: "angkor-wat-kh", type: "tourism" } },
-    { properties: { formatted: "Great Wall of China", country: "China", country_code: "cn", place_id: "great-wall-cn", type: "tourism" } },
-    
+    {
+      properties: {
+        formatted: "Kyoto, Japan",
+        country: "Japan",
+        country_code: "jp",
+        place_id: "kyoto-jp",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Florence, Italy",
+        country: "Italy",
+        country_code: "it",
+        place_id: "florence-it",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Venice, Italy",
+        country: "Italy",
+        country_code: "it",
+        place_id: "venice-it",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Seville, Spain",
+        country: "Spain",
+        country_code: "es",
+        place_id: "seville-es",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Salzburg, Austria",
+        country: "Austria",
+        country_code: "at",
+        place_id: "salzburg-at",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Krakow, Poland",
+        country: "Poland",
+        country_code: "pl",
+        place_id: "krakow-pl",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Dubrovnik, Croatia",
+        country: "Croatia",
+        country_code: "hr",
+        place_id: "dubrovnik-hr",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Taj Mahal, India",
+        country: "India",
+        country_code: "in",
+        place_id: "taj-mahal-in",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Angkor Wat, Cambodia",
+        country: "Cambodia",
+        country_code: "kh",
+        place_id: "angkor-wat-kh",
+        type: "tourism",
+      },
+    },
+    {
+      properties: {
+        formatted: "Great Wall of China",
+        country: "China",
+        country_code: "cn",
+        place_id: "great-wall-cn",
+        type: "tourism",
+      },
+    },
+
     // Modern Cities
-    { properties: { formatted: "Singapore", country: "Singapore", country_code: "sg", place_id: "singapore-sg", type: "city" } },
-    { properties: { formatted: "Dubai, UAE", country: "United Arab Emirates", country_code: "ae", place_id: "dubai-ae", type: "city" } },
-    { properties: { formatted: "Hong Kong", country: "Hong Kong", country_code: "hk", place_id: "hong-kong-hk", type: "city" } },
-    { properties: { formatted: "Seoul, South Korea", country: "South Korea", country_code: "kr", place_id: "seoul-kr", type: "city" } },
-    { properties: { formatted: "Sydney, Australia", country: "Australia", country_code: "au", place_id: "sydney-au", type: "city" } },
-    { properties: { formatted: "Cape Town, South Africa", country: "South Africa", country_code: "za", place_id: "cape-town-za", type: "city" } },
-    { properties: { formatted: "Rio de Janeiro, Brazil", country: "Brazil", country_code: "br", place_id: "rio-br", type: "city" } },
-    { properties: { formatted: "Mexico City, Mexico", country: "Mexico", country_code: "mx", place_id: "mexico-city-mx", type: "city" } },
-    { properties: { formatted: "Buenos Aires, Argentina", country: "Argentina", country_code: "ar", place_id: "buenos-aires-ar", type: "city" } },
-    { properties: { formatted: "Lima, Peru", country: "Peru", country_code: "pe", place_id: "lima-pe", type: "city" } }
+    {
+      properties: {
+        formatted: "Singapore",
+        country: "Singapore",
+        country_code: "sg",
+        place_id: "singapore-sg",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Dubai, UAE",
+        country: "United Arab Emirates",
+        country_code: "ae",
+        place_id: "dubai-ae",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Hong Kong",
+        country: "Hong Kong",
+        country_code: "hk",
+        place_id: "hong-kong-hk",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Seoul, South Korea",
+        country: "South Korea",
+        country_code: "kr",
+        place_id: "seoul-kr",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Sydney, Australia",
+        country: "Australia",
+        country_code: "au",
+        place_id: "sydney-au",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Cape Town, South Africa",
+        country: "South Africa",
+        country_code: "za",
+        place_id: "cape-town-za",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Rio de Janeiro, Brazil",
+        country: "Brazil",
+        country_code: "br",
+        place_id: "rio-br",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Mexico City, Mexico",
+        country: "Mexico",
+        country_code: "mx",
+        place_id: "mexico-city-mx",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Buenos Aires, Argentina",
+        country: "Argentina",
+        country_code: "ar",
+        place_id: "buenos-aires-ar",
+        type: "city",
+      },
+    },
+    {
+      properties: {
+        formatted: "Lima, Peru",
+        country: "Peru",
+        country_code: "pe",
+        place_id: "lima-pe",
+        type: "city",
+      },
+    },
   ];
 
-  if (!searchTerm) return popularDestinations.slice(0, 10);
-  
+  // --- MODIFICATION START ---
+  // Filter the curated list to only include actual cities, removing landmarks and tourist spots.
+  const cityDestinations = popularDestinations.filter(
+    (dest) => dest.properties.type === "city"
+  );
+
+  if (!searchTerm) return cityDestinations.slice(0, 10);
+
   const searchLower = searchTerm.toLowerCase();
-  return popularDestinations
-    .filter(dest => 
-      dest.properties.formatted.toLowerCase().includes(searchLower) ||
-      dest.properties.country.toLowerCase().includes(searchLower)
+  return cityDestinations
+    .filter(
+      (dest) =>
+        dest.properties.formatted.toLowerCase().includes(searchLower) ||
+        dest.properties.country.toLowerCase().includes(searchLower)
     )
     .slice(0, 8);
+  // --- MODIFICATION END ---
 };
 
 const useClickOutside = (ref, handler) => {
@@ -354,7 +842,6 @@ const ModernDatePicker = ({
       curr.setHours(0, 0, 0, 0);
       const selected = selectedDate ? new Date(selectedDate) : null;
       if (selected) selected.setHours(0, 0, 0, 0);
-
       const isSelected = selected && selected.getTime() === curr.getTime();
       const isToday = curr.getTime() === today.getTime();
       const isDisabled = minD && curr < minD;
@@ -595,30 +1082,39 @@ const PlannerPage = () => {
     }
     const handler = setTimeout(async () => {
       setIsTyping(true);
-      console.log("🔍 Searching for:", destination);
+      let apiSuggestions = [];
       try {
-        // Comprehensive search for autocomplete - search all types of places
+        // Fetch all types of places for broader results
         const res = await fetch(
-          `https://api.geoapify.com/v1/geocode/autocomplete?text=${destination}&apiKey=${GEOAPIFY_API_KEY}&limit=20&format=json&lang=en`
+          `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
+            destination
+          )}&apiKey=${GEOAPIFY_API_KEY}&limit=10&format=json&lang=en`
         );
         const data = await res.json();
-        console.log("📡 API Response:", data);
-        
-        // Use only API results for autocomplete
-        let enhancedSuggestions = data.features || [];
-        
-        console.log("✅ Final suggestions:", enhancedSuggestions);
-        setSuggestions(enhancedSuggestions);
-        setHighlightedIndex(-1);
+        // Directly use the results without filtering
+        apiSuggestions = data.features || [];
       } catch (err) {
-        console.error("❌ Geoapify error:", err);
-        // Fallback to empty array if API fails
-        console.log("🔄 API failed, no suggestions available");
-        setSuggestions([]);
+        console.error("Geoapify API error:", err);
+        // Don't set suggestions here, let the merge happen below
       } finally {
+        // Get popular destinations that match the search term
+        const popular = getPopularDestinations(destination);
+
+        // Merge API results with popular destinations, removing duplicates
+        const seen = new Set();
+        const merged = [...apiSuggestions, ...popular].filter((s) => {
+          const key = s.properties.formatted.toLowerCase();
+          if (seen.has(key) || !s.properties.formatted) return false;
+          seen.add(key);
+          return true;
+        });
+
+        setSuggestions(merged.slice(0, 15)); // Show up to 15 results
+        setHighlightedIndex(-1);
         setIsTyping(false);
       }
-    }, 200);
+    }, 300); // Increased debounce time slightly
+
     return () => clearTimeout(handler);
   }, [destination]);
 
@@ -703,16 +1199,18 @@ JSON Schema:
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey) {
-        throw new Error("Gemini API key is not configured. Please add VITE_GEMINI_API_KEY to your environment variables.");
+        throw new Error(
+          "Gemini API key is not configured. Please add VITE_GEMINI_API_KEY to your environment variables."
+        );
       }
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
       const payload = {
         contents: [{ parts: [{ text: query }] }],
         systemInstruction: { parts: [{ text: systemPrompt }] },
-        generationConfig: { 
+        generationConfig: {
           responseMimeType: "application/json",
           temperature: 0.7,
-          maxOutputTokens: 4000
+          maxOutputTokens: 4000,
         },
       };
       const response = await fetch(apiUrl, {
@@ -722,7 +1220,9 @@ JSON Schema:
       });
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(
+          `API Error: ${response.status} ${response.statusText} - ${errorText}`
+        );
       }
       const result = await response.json();
       const candidate = result.candidates?.[0];
@@ -737,7 +1237,9 @@ JSON Schema:
         } catch (parseError) {
           console.error("JSON Parse Error:", parseError);
           console.error("Raw response:", candidate.content.parts[0].text);
-          throw new Error("Failed to parse itinerary from AI response. The AI may have returned invalid JSON.");
+          throw new Error(
+            "Failed to parse itinerary from AI response. The AI may have returned invalid JSON."
+          );
         }
       } else {
         console.error("Unexpected API response structure:", result);
@@ -797,20 +1299,23 @@ JSON Schema:
     setOriginalUserQuery(userQuery);
 
     try {
-      console.log('🚀 Starting API call...');
+      console.log("🚀 Starting API call...");
       const parsedItinerary = await callGeminiAPI(userQuery);
-      console.log('✅ API call successful:', parsedItinerary);
+      console.log("✅ API call successful:", parsedItinerary);
       if (parsedItinerary && parsedItinerary.itinerary_options) {
         setItinerary(parsedItinerary);
       } else {
-        console.log('❌ Invalid response structure:', parsedItinerary);
+        console.log("❌ Invalid response structure:", parsedItinerary);
         setError(
           "Sorry, I couldn't create an itinerary with that request. Please try different options."
         );
       }
     } catch (error) {
-      console.error('❌ API call failed:', error);
-      setError(error.message || "Sorry, I couldn't create an itinerary with that request. Please try different options.");
+      console.error("❌ API call failed:", error);
+      setError(
+        error.message ||
+          "Sorry, I couldn't create an itinerary with that request. Please try different options."
+      );
     } finally {
       setLoading(false);
     }
@@ -847,7 +1352,10 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
         );
       }
     } catch (error) {
-      setError(error.message || "Sorry, I couldn't refine the itinerary with that request. Please try a different modification.");
+      setError(
+        error.message ||
+          "Sorry, I couldn't refine the itinerary with that request. Please try a different modification."
+      );
     } finally {
       setLoading(false);
     }
@@ -909,11 +1417,10 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
                 onKeyDown={handleKeyDown}
-
                 className="relative z-10 w-full bg-gray-50 text-gray-900 placeholder:text-gray-500 border-2 border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-0 rounded-xl py-3 pl-12 pr-4 transition-all duration-300 ease-in-out text-base font-medium hover:border-gray-400"
               />
 
-                              {(suggestions.length > 0 || isTyping) && (
+              {(suggestions.length > 0 || isTyping) && (
                 <div className="absolute top-full mt-2 left-0 right-0 bg-white/95 backdrop-blur-xl border-2 border-purple-100 rounded-xl shadow-2xl z-20 max-h-60 overflow-y-auto animate-fade-in-up">
                   {isTyping && (
                     <div className="text-gray-500 px-4 py-3 text-center text-sm">
@@ -931,7 +1438,9 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
                           ref={(el) => (suggestionRefs.current[i] = el)}
                           onClick={() => handleSuggestionClick(s)}
                           className={`px-4 py-3 text-gray-900 hover:bg-purple-50 cursor-pointer transition-all duration-200 border-b border-gray-100 last:border-b-0 flex items-center gap-3 ${
-                            i === highlightedIndex ? "bg-purple-50 border-l-4 border-l-purple-500" : ""
+                            i === highlightedIndex
+                              ? "bg-purple-50 border-l-4 border-l-purple-500"
+                              : ""
                           }`}
                         >
                           <img
@@ -945,7 +1454,7 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
                             </div>
                             {s.properties.type && (
                               <div className="text-xs text-gray-500 capitalize">
-                                {s.properties.type.replace('_', ' ')}
+                                {s.properties.type.replace("_", " ")}
                               </div>
                             )}
                           </div>
@@ -958,12 +1467,13 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
                       ))}
                     </div>
                   )}
-                  {!isTyping && suggestions.length === 0 && destination.length > 0 && (
-                    <div className="text-gray-500 px-4 py-3 text-center text-sm">
-                      No destinations found. Try a different search term.
-                    </div>
-                  )}
-                  
+                  {!isTyping &&
+                    suggestions.length === 0 &&
+                    destination.length > 0 && (
+                      <div className="text-gray-500 px-4 py-3 text-center text-sm">
+                        No destinations found. Try a different search term.
+                      </div>
+                    )}
                 </div>
               )}
             </div>
@@ -1080,41 +1590,42 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
       </div>
       <div ref={resultsRef} className="w-full flex justify-center px-4">
         <div className="w-full max-w-3xl">
-        <ErrorDisplay message={error} />
-        {loading && <LoadingSkeleton />}
-        {itinerary && (
-          <ItineraryDisplay data={itinerary} destination={destination} />
-        )}
-        {itinerary && !loading && (
-          <div className="w-full mt-8 sm:mt-12 p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-200 animate-fade-in-up">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">
-              Want to make some changes?
-            </h3>
-            <p className="text-center text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
-              Let me know what you'd like to adjust, and I'll create a new
-              version for you!
-            </p>
-            <div className="relative group">
-              <textarea
-                placeholder="e.g., 'Can you replace the museum on Day 2 with a hiking trail?' or 'Add more budget-friendly food options.'"
-                value={refinementPrompt}
-                onChange={(e) => setRefinementPrompt(e.target.value)}
-                className="w-full bg-white text-gray-900 placeholder-gray-400 border-2 border-gray-200 focus:border-purple-500 focus:ring-0 rounded-2xl py-3 px-4 h-24 resize-none transition-all duration-300 ease-in-out text-sm sm:text-base"
-              />
+          <ErrorDisplay message={error} />
+          {loading && <LoadingSkeleton />}
+          {itinerary && (
+            <ItineraryDisplay data={itinerary} destination={destination} />
+          )}
+          {itinerary && !loading && (
+            <div className="w-full mt-8 sm:mt-12 p-4 sm:p-6 bg-white rounded-2xl shadow-lg border border-gray-200 animate-fade-in-up">
+              <h3 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">
+                Want to make some changes?
+              </h3>
+              <p className="text-center text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
+                Let me know what you'd like to adjust, and I'll create a new
+                version for you!
+              </p>
+              <div className="relative group">
+                <textarea
+                  placeholder="e.g., 'Can you replace the museum on Day 2 with a hiking trail?' or 'Add more budget-friendly food options.'"
+                  value={refinementPrompt}
+                  onChange={(e) => setRefinementPrompt(e.target.value)}
+                  className="w-full bg-white text-gray-900 placeholder-gray-400 border-2 border-gray-200 focus:border-purple-500 focus:ring-0 rounded-2xl py-3 px-4 h-24 resize-none transition-all duration-300 ease-in-out text-sm sm:text-base"
+                />
+              </div>
+              <button
+                onClick={refineItinerary}
+                disabled={loading}
+                className={`mt-4 w-full text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-base sm:text-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-xl hover:shadow-emerald-500/30"
+                }`}
+              >
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" /> Refine My
+                Itinerary
+              </button>
             </div>
-            <button
-              onClick={refineItinerary}
-              disabled={loading}
-              className={`mt-4 w-full text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-base sm:text-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-xl hover:shadow-emerald-500/30"
-              }`}
-            >
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" /> Refine My Itinerary
-            </button>
-          </div>
-        )}
+          )}
         </div>
       </div>
     </div>
@@ -1180,7 +1691,7 @@ const BusinessPage = ({ setCurrentPage }) => (
         </p>
         <button
           onClick={() => setCurrentPage("contact")}
-          className="w-full bg-gray-900 text-white font-bold py-3 rounded-full text-lg hover:bg-opacity-90 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg"
+          className="w-full bg-gray-900 text-white font-bold py-3 rounded-full text-lg hover:bg-opacity-90 transition-colors duration-300 ease-in-out transform hover:scale-105 shadow-lg"
         >
           Request a Demo
         </button>
@@ -1256,7 +1767,10 @@ const ItineraryDisplay = ({ data, destination }) => {
 
   return (
     <div className="w-full mt-4 sm:mt-6 text-gray-900 animate-fade-in">
-      <div id="pdf-content" className="bg-white p-3 sm:p-4 md:p-6 rounded-2xl shadow-lg border border-gray-200">
+      <div
+        id="pdf-content"
+        className="bg-white p-3 sm:p-4 md:p-6 rounded-2xl shadow-lg border border-gray-200"
+      >
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-center text-gray-900 opacity-0 animate-fade-in-up">
           Your Trip to {destination}!
         </h2>
@@ -1374,7 +1888,9 @@ const ActivityCard = ({ time, details, icon }) => {
   if (!details || !details.activity) return null;
   return (
     <div className="flex items-start gap-3 sm:gap-4">
-      <div className={`${iconColorMap[time]} p-2 rounded-full mt-1 flex-shrink-0`}>
+      <div
+        className={`${iconColorMap[time]} p-2 rounded-full mt-1 flex-shrink-0`}
+      >
         {React.cloneElement(icon, { className: "w-4 h-4 sm:w-5 sm:h-5" })}
       </div>
       <div className="min-w-0 flex-1">
@@ -1390,7 +1906,9 @@ const FoodCard = ({ details }) => {
   if (!details || (!details.lunch && !details.dinner)) return null;
   return (
     <div className="border-t border-gray-200 pt-3 sm:pt-4 mt-3 sm:mt-4 flex items-start gap-3 sm:gap-4">
-      <div className={`${iconColorMap["Food"]} p-2 rounded-full mt-1 flex-shrink-0`}>
+      <div
+        className={`${iconColorMap["Food"]} p-2 rounded-full mt-1 flex-shrink-0`}
+      >
         <Utensils className="w-4 h-4 sm:w-5 sm:h-5" />
       </div>
       <div className="min-w-0 flex-1">
@@ -1480,7 +1998,9 @@ const App = () => {
             </button>
           </div>
         </nav>
-        <div className="w-full max-w-7xl z-0 p-3 sm:p-4 md:p-6">{renderPage()}</div>
+        <div className="w-full max-w-7xl z-0 p-3 sm:p-4 md:p-6">
+          {renderPage()}
+        </div>
         <footer className="w-full max-w-7xl mt-auto pt-10 pb-4 text-center text-gray-600 border-t border-gray-200 z-10 text-sm">
           <p>&copy; {new Date().getFullYear()} Itinera. All rights reserved.</p>
           <p>Powered by AI, built for adventure.</p>
