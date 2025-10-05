@@ -72,7 +72,7 @@ const StyleInjector = () => (
 );
 
 // --- CONSTANTS ---
-const GEOAPIFY_API_KEY = "e141140e2b9048a0a04f55d5749bce01";
+const GEOAPIFY_API_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY || "e141140e2b9048a0a04f55d5749bce01";
 
 const currencies = [
   { code: "INR", name: "Indian Rupee", countryCode: "in" },
@@ -1080,40 +1080,91 @@ const PlannerPage = () => {
       setSuggestions([]);
       return;
     }
+    
     const handler = setTimeout(async () => {
       setIsTyping(true);
       let apiSuggestions = [];
+      
       try {
-        // Fetch all types of places for broader results
-        const res = await fetch(
-          `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
-            destination
-          )}&apiKey=${GEOAPIFY_API_KEY}&limit=10&format=json&lang=en`
-        );
-        const data = await res.json();
-        // Directly use the results without filtering
-        apiSuggestions = data.features || [];
-      } catch (err) {
-        console.error("Geoapify API error:", err);
-        // Don't set suggestions here, let the merge happen below
-      } finally {
-        // Get popular destinations that match the search term
-        const popular = getPopularDestinations(destination);
+        // Validate API key
+        if (!GEOAPIFY_API_KEY || GEOAPIFY_API_KEY.length < 10) {
+          console.warn("Geoapify API key is missing or invalid");
+          throw new Error("Invalid API key");
+        }
 
-        // Merge API results with popular destinations, removing duplicates
-        const seen = new Set();
-        const merged = [...apiSuggestions, ...popular].filter((s) => {
-          const key = s.properties.formatted.toLowerCase();
-          if (seen.has(key) || !s.properties.formatted) return false;
-          seen.add(key);
-          return true;
+        // Create the API URL with proper parameters
+        const apiUrl = new URL("https://api.geoapify.com/v1/geocode/autocomplete");
+        apiUrl.searchParams.set("text", destination);
+        apiUrl.searchParams.set("apiKey", GEOAPIFY_API_KEY);
+        apiUrl.searchParams.set("limit", "10");
+        apiUrl.searchParams.set("format", "json");
+        apiUrl.searchParams.set("lang", "en");
+        // Remove overly restrictive country filter to allow global results
+
+        console.log("🔍 Fetching suggestions from Geoapify API...");
+        
+        const response = await fetch(apiUrl.toString(), {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+            "User-Agent": "Itinera-Travel-Planner/1.0"
+          }
         });
 
-        setSuggestions(merged.slice(0, 15)); // Show up to 15 results
-        setHighlightedIndex(-1);
-        setIsTyping(false);
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Geoapify API error: ${response.status} ${response.statusText}`, errorText);
+          throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // Validate response structure
+        if (!data || typeof data !== 'object') {
+          throw new Error("Invalid response format from Geoapify API");
+        }
+
+        if (data.error) {
+          console.error("Geoapify API returned error:", data.error);
+          throw new Error(`API error: ${data.error.message || 'Unknown error'}`);
+        }
+
+        // Extract features from response (Geoapify returns results, not features)
+        apiSuggestions = Array.isArray(data.results) ? data.results : [];
+        
+        // Validate each suggestion has required properties
+        // Note: Geoapify returns data directly, not in properties object
+        apiSuggestions = apiSuggestions.filter(suggestion => {
+          return suggestion && 
+                 suggestion.formatted && 
+                 suggestion.country_code;
+        });
+
+        console.log(`✅ Received ${apiSuggestions.length} suggestions from Geoapify API`);
+        
+      } catch (err) {
+        console.error("Geoapify API error:", err);
+        apiSuggestions = []; // Reset to empty array on error
       }
-    }, 300); // Increased debounce time slightly
+
+      // Always get popular destinations as fallback
+      const popular = getPopularDestinations(destination);
+
+      // Merge API results with popular destinations, removing duplicates
+      const seen = new Set();
+      const merged = [...apiSuggestions, ...popular].filter((s) => {
+        // Handle both Geoapify format (direct properties) and popular destinations format (nested properties)
+        const formatted = s.formatted || s.properties?.formatted;
+        const key = formatted?.toLowerCase();
+        if (seen.has(key) || !formatted) return false;
+        seen.add(key);
+        return true;
+      });
+
+      setSuggestions(merged.slice(0, 15)); // Show up to 15 results
+      setHighlightedIndex(-1);
+      setIsTyping(false);
+    }, 300);
 
     return () => clearTimeout(handler);
   }, [destination]);
@@ -1155,46 +1206,32 @@ const PlannerPage = () => {
   const callGeminiAPI = async (query) => {
     const systemPrompt = `You are Itinera, a travel planning AI. Create three distinct travel itinerary options: 'Balanced', 'Luxury Stay', and 'Explorer' for the given destination, budget, and preferences.
 
-IMPORTANT: Respond ONLY with valid JSON. No text before or after the JSON.
+CRITICAL: Respond with ONLY valid JSON. No text before/after. No markdown blocks. Keep descriptions concise (1-2 sentences max).
 
-JSON Schema:
+JSON structure:
 {
   "itinerary_options": [
     {
-      "type": "Balanced|Luxury Stay|Explorer",
-      "summary": "Brief description of this itinerary style",
+      "type": "Balanced",
+      "summary": "Brief description",
       "itinerary": [
         {
           "day": 1,
           "theme": "Day theme",
-          "morning": {
-            "activity": "Activity name",
-            "description": "Brief description"
-          },
-          "afternoon": {
-            "activity": "Activity name", 
-            "description": "Brief description"
-          },
-          "evening": {
-            "activity": "Activity name",
-            "description": "Brief description"
-          },
-          "food": {
-            "lunch": "Lunch suggestion",
-            "dinner": "Dinner suggestion"
-          }
+          "morning": {"activity": "Activity", "description": "Brief description"},
+          "afternoon": {"activity": "Activity", "description": "Brief description"},
+          "evening": {"activity": "Activity", "description": "Brief description"},
+          "food": {"lunch": "Suggestion", "dinner": "Suggestion"}
         }
       ],
       "accommodation_suggestions": [
-        {
-          "name": "Hotel name",
-          "type": "Hotel type",
-          "description": "Brief description"
-        }
+        {"name": "Hotel", "type": "Type", "description": "Brief description"}
       ]
     }
   ]
-}`;
+}
+
+ONLY return the JSON object.`;
 
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -1203,14 +1240,14 @@ JSON Schema:
           "Gemini API key is not configured. Please add VITE_GEMINI_API_KEY to your environment variables."
         );
       }
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
       const payload = {
         contents: [{ parts: [{ text: query }] }],
         systemInstruction: { parts: [{ text: systemPrompt }] },
         generationConfig: {
           responseMimeType: "application/json",
           temperature: 0.7,
-          maxOutputTokens: 4000,
+          maxOutputTokens: 8000,
         },
       };
       const response = await fetch(apiUrl, {
@@ -1228,18 +1265,49 @@ JSON Schema:
       const candidate = result.candidates?.[0];
       if (candidate?.content?.parts?.[0]?.text) {
         try {
-          const parsedResponse = JSON.parse(candidate.content.parts[0].text);
+          let responseText = candidate.content.parts[0].text;
+          
+          // Clean up the response text to extract valid JSON
+          // Remove any markdown formatting or extra text
+          responseText = responseText.trim();
+          
+          // Remove markdown code blocks if present
+          if (responseText.startsWith('```json')) {
+            responseText = responseText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+          } else if (responseText.startsWith('```')) {
+            responseText = responseText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+          }
+          
+          // Try to find JSON object in the response
+          const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            responseText = jsonMatch[0];
+          }
+          
+          // Debug: console.log("Cleaned response text:", responseText);
+          
+          const parsedResponse = JSON.parse(responseText);
           if (parsedResponse && parsedResponse.itinerary_options) {
             return parsedResponse;
           } else {
+            console.error("Invalid response structure:", parsedResponse);
             throw new Error("Invalid response structure from AI");
           }
         } catch (parseError) {
           console.error("JSON Parse Error:", parseError);
           console.error("Raw response:", candidate.content.parts[0].text);
-          throw new Error(
-            "Failed to parse itinerary from AI response. The AI may have returned invalid JSON."
-          );
+          
+          // Try to provide a more helpful error message
+          let errorMessage = "Failed to parse itinerary from AI response. ";
+          if (parseError.message.includes('Unexpected token')) {
+            errorMessage += "The AI response may contain invalid JSON formatting.";
+          } else if (parseError.message.includes('Unexpected end')) {
+            errorMessage += "The AI response appears to be incomplete.";
+          } else {
+            errorMessage += "The AI may have returned invalid JSON.";
+          }
+          
+          throw new Error(errorMessage);
         }
       } else {
         console.error("Unexpected API response structure:", result);
@@ -1367,7 +1435,9 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
       p.includes(id) ? p.filter((i) => i !== id) : [...p, id]
     );
   const handleSuggestionClick = (s) => {
-    setDestination(s.properties.formatted);
+    // Handle both Geoapify format (direct properties) and popular destinations format (nested properties)
+    const formatted = s.formatted || s.properties?.formatted;
+    setDestination(formatted);
     setSuggestions([]);
   };
   const handleKeyDown = (e) => {
@@ -1432,39 +1502,48 @@ Please generate a new, updated itinerary based on this feedback. Make sure to ke
                   )}
                   {!isTyping && suggestions.length > 0 && (
                     <div className="py-1">
-                      {suggestions.map((s, i) => (
-                        <div
-                          key={s.properties.place_id}
-                          ref={(el) => (suggestionRefs.current[i] = el)}
-                          onClick={() => handleSuggestionClick(s)}
-                          className={`px-4 py-3 text-gray-900 hover:bg-purple-50 cursor-pointer transition-all duration-200 border-b border-gray-100 last:border-b-0 flex items-center gap-3 ${
-                            i === highlightedIndex
-                              ? "bg-purple-50 border-l-4 border-l-purple-500"
-                              : ""
-                          }`}
-                        >
-                          <img
-                            src={getCountryFlagUrl(s.properties.country_code)}
-                            alt={s.properties.country}
-                            className="w-5 h-auto rounded-sm flex-shrink-0"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-gray-900 truncate">
-                              {s.properties.formatted}
+                      {suggestions.map((s, i) => {
+                        // Handle both Geoapify format (direct properties) and popular destinations format (nested properties)
+                        const placeId = s.place_id || s.properties?.place_id;
+                        const countryCode = s.country_code || s.properties?.country_code;
+                        const country = s.country || s.properties?.country;
+                        const formatted = s.formatted || s.properties?.formatted;
+                        const type = s.result_type || s.properties?.type;
+                        
+                        return (
+                          <div
+                            key={placeId || i}
+                            ref={(el) => (suggestionRefs.current[i] = el)}
+                            onClick={() => handleSuggestionClick(s)}
+                            className={`px-4 py-3 text-gray-900 hover:bg-purple-50 cursor-pointer transition-all duration-200 border-b border-gray-100 last:border-b-0 flex items-center gap-3 ${
+                              i === highlightedIndex
+                                ? "bg-purple-50 border-l-4 border-l-purple-500"
+                                : ""
+                            }`}
+                          >
+                            <img
+                              src={getCountryFlagUrl(countryCode)}
+                              alt={country}
+                              className="w-5 h-auto rounded-sm flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-gray-900 truncate">
+                                {formatted}
+                              </div>
+                              {type && (
+                                <div className="text-xs text-gray-500 capitalize">
+                                  {type.replace("_", " ")}
+                                </div>
+                              )}
                             </div>
-                            {s.properties.type && (
-                              <div className="text-xs text-gray-500 capitalize">
-                                {s.properties.type.replace("_", " ")}
+                            {i === highlightedIndex && (
+                              <div className="text-purple-500">
+                                <ArrowRight className="w-4 h-4" />
                               </div>
                             )}
                           </div>
-                          {i === highlightedIndex && (
-                            <div className="text-purple-500">
-                              <ArrowRight className="w-4 h-4" />
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                   {!isTyping &&

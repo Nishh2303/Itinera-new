@@ -27,57 +27,43 @@ const testQuery = `Create a travel itinerary with these details:
 
 const systemPrompt = `You are Itinera, a travel planning AI. Create three distinct travel itinerary options: 'Balanced', 'Luxury Stay', and 'Explorer' for the given destination, budget, and preferences.
 
-IMPORTANT: Respond ONLY with valid JSON. No text before or after the JSON.
+CRITICAL: Respond with ONLY valid JSON. No text before/after. No markdown blocks. Keep descriptions concise (1-2 sentences max).
 
-JSON Schema:
+JSON structure:
 {
   "itinerary_options": [
     {
-      "type": "Balanced|Luxury Stay|Explorer",
-      "summary": "Brief description of this itinerary style",
+      "type": "Balanced",
+      "summary": "Brief description",
       "itinerary": [
         {
           "day": 1,
           "theme": "Day theme",
-          "morning": {
-            "activity": "Activity name",
-            "description": "Brief description"
-          },
-          "afternoon": {
-            "activity": "Activity name", 
-            "description": "Brief description"
-          },
-          "evening": {
-            "activity": "Activity name",
-            "description": "Brief description"
-          },
-          "food": {
-            "lunch": "Lunch suggestion",
-            "dinner": "Dinner suggestion"
-          }
+          "morning": {"activity": "Activity", "description": "Brief description"},
+          "afternoon": {"activity": "Activity", "description": "Brief description"},
+          "evening": {"activity": "Activity", "description": "Brief description"},
+          "food": {"lunch": "Suggestion", "dinner": "Suggestion"}
         }
       ],
       "accommodation_suggestions": [
-        {
-          "name": "Hotel name",
-          "type": "Hotel type",
-          "description": "Brief description"
-        }
+        {"name": "Hotel", "type": "Type", "description": "Brief description"}
       ]
     }
   ]
-}`;
+}
+
+ONLY return the JSON object.`;
 
 async function testAPI() {
   try {
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     const payload = {
       contents: [{ parts: [{ text: testQuery }] }],
       systemInstruction: { parts: [{ text: systemPrompt }] },
       generationConfig: { 
         responseMimeType: "application/json",
         temperature: 0.7,
-        maxOutputTokens: 4000
+        maxOutputTokens: 8000
       },
     };
 
@@ -103,11 +89,28 @@ async function testAPI() {
     const candidate = result.candidates?.[0];
     if (candidate?.content?.parts?.[0]?.text) {
       const responseText = candidate.content.parts[0].text;
-      console.log('\n📄 Raw Response:');
+      console.log('\n📄 Raw Response (first 500 chars):');
       console.log(responseText.substring(0, 500) + '...');
+      console.log('\n📏 Total response length:', responseText.length, 'characters');
       
       try {
-        const parsed = JSON.parse(responseText);
+        // Clean up the response text to extract valid JSON
+        let cleanedText = responseText.trim();
+        
+        // Remove markdown code blocks if present
+        if (cleanedText.startsWith('```json')) {
+          cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        } else if (cleanedText.startsWith('```')) {
+          cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        }
+        
+        // Try to find JSON object in the response
+        const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          cleanedText = jsonMatch[0];
+        }
+        
+        const parsed = JSON.parse(cleanedText);
         console.log('\n✅ JSON parsed successfully!');
         console.log('📊 Response structure:', {
           hasItineraryOptions: !!parsed.itinerary_options,
@@ -115,6 +118,8 @@ async function testAPI() {
         });
       } catch (parseError) {
         console.log('\n❌ JSON Parse Error:', parseError.message);
+        console.log('🔍 Attempting to clean response...');
+        console.log('📄 Raw response:', responseText);
       }
     } else {
       console.log('❌ Unexpected response structure:', result);

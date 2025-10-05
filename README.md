@@ -108,6 +108,17 @@ The application integrates with:
 - **Google Gemini AI**: For generating travel itineraries
 - **Geoapify**: For destination search and autocomplete
 
+### Required API Keys
+
+1. **Gemini API Key** (Required)
+   - Get your key from: https://makersuite.google.com/app/apikey
+   - Set as: `VITE_GEMINI_API_KEY=your_key_here`
+
+2. **Geoapify API Key** (Optional but recommended)
+   - Get your key from: https://myprojects.geoapify.com/
+   - Set as: `VITE_GEOAPIFY_API_KEY=your_key_here`
+   - If not provided, the app will use a fallback API key
+
 ## Troubleshooting
 
 ### Common Issues
@@ -117,10 +128,17 @@ The application integrates with:
 - Verify that your API key is correctly set as `VITE_GEMINI_API_KEY=your_key_here`
 - Restart your development server after adding the environment variable
 
-**API Error 400/401**
+**Destination autocomplete not working**
+- Check that your Geoapify API key is valid (if using custom key)
+- Verify the API key format: `VITE_GEOAPIFY_API_KEY=your_key_here`
+- Check browser console for Geoapify API errors
+- The app will fall back to popular destinations if the API fails
+
+**API Error 400/401/404**
 - Check that your Gemini API key is valid and active
 - Ensure you have sufficient quota for the Gemini API
 - Verify the API key format (should be a long string without spaces)
+- If you get a 404 error, the Gemini model may have been updated - check the latest API documentation
 
 **JSON Parse Error**
 - This usually indicates the AI returned malformed JSON
