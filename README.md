@@ -1,165 +1,51 @@
-# Itinera - AI-Powered Travel Itinerary Planner
+# Itinera: AI travel planner
 
-A modern, AI-powered travel planning application that creates personalized itineraries using Google's Gemini AI.
+Itinera turns a destination, dates, budget and travel style into **three costed, day-by-day itineraries** (Balanced, Luxury, Explorer). You can refine a plan in plain language and export it as a PDF or Markdown trip report.
 
 ## Features
 
-- 🧠 AI-powered itinerary generation with three distinct travel styles
-- 🌍 Real-time destination search with autocomplete
-- 💰 Budget-aware planning
-- 🎯 Personalized travel preferences
-- 📱 Responsive design
-- 🔄 Interactive itinerary refinement
+- **Three plan options** priced against your budget, with an over/under indicator
+- **Cost breakdown** across accommodation, food, activities, transport and misc, plus per-person and per-day figures
+- **Day-by-day timeline**: morning, afternoon and evening activities with costs, plus lunch and dinner picks
+- **Where to stay**: 2–3 stays per option with area and nightly price
+- **Practical notes**: getting around, seasonal notes, tips, and an interactive packing checklist
+- **Refine**: "make day 2 slower" or "cut 20%" regenerates all options
+- **Trip report export**: print-optimised PDF (via the browser's Save as PDF) and Markdown
+- The last plan is kept across page refreshes; destination autocomplete works offline with an optional Geoapify upgrade
 
-## Setup Instructions
+## Architecture
 
-### Prerequisites
-
-- Node.js (v16 or higher)
-- npm or yarn
-- Google Gemini API key
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd Itinera-new
+```
+src/            React 19 + Tailwind v4 frontend (Vite)
+  pages/        Home, Planner, Business, Contact (hash routing)
+  components/   TripForm, DestinationInput, ItineraryReport, Layout, Feedback
+  lib/          dates, currency formatting, destinations, API client, report export
+server/         itinerary.js: prompt, JSON schema, validation, OpenAI call
+api/            itinerary.js: Vercel serverless function (wraps server/)
+vite.config.js  serves the same handler at /api/itinerary in dev and preview
 ```
 
-2. Install dependencies:
+The OpenAI key stays **server-side only**. The browser calls `/api/itinerary`, and the server calls OpenAI with [structured outputs](https://platform.openai.com/docs/guides/structured-outputs) (strict JSON schema), so responses always match the shape the UI expects. Totals are recomputed from the breakdown on the server.
+
+## Setup
+
 ```bash
 npm install
+cp .env.example .env    # then add your OPENAI_API_KEY
+npm run dev             # http://localhost:5173
 ```
 
-3. Set up environment variables:
-   
-   **Option A: Use the setup script (Recommended)**
-   ```bash
-   npm run setup
-   ```
-   
-   **Option B: Manual setup**
-   - Create a `.env` file in the root directory
-   - Add your Gemini API key:
-   ```
-   VITE_GEMINI_API_KEY=your_actual_api_key_here
-   ```
+| Variable | Required | Purpose |
+|---|---|---|
+| `OPENAI_API_KEY` | yes | Server-side OpenAI key |
+| `OPENAI_MODEL` | no | Defaults to `gpt-4.1-mini`; any model that supports structured outputs |
+| `VITE_GEOAPIFY_API_KEY` | no | Live city autocomplete; otherwise a built-in popular list is used |
+| `VITE_CONTACT_EMAIL` | no | Address used on the Contact page |
 
-### Getting a Gemini API Key
+## Deploy (Vercel)
 
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the generated API key
-5. Paste it in your `.env` file
+Import the repo in Vercel (it auto-detects Vite and the `api/` function), then add `OPENAI_API_KEY` under Project → Settings → Environment Variables. To check a production build locally, run `npm run build && npm run preview`.
 
-### Running the Application
+## Scripts
 
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:5173`
-
-### Testing the API
-
-To test if your Gemini API key is working correctly:
-
-```bash
-npm run test-api
-```
-
-This will send a test request to the Gemini API and show you the response.
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-## Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `VITE_GEMINI_API_KEY` | Your Google Gemini API key | Yes |
-
-## Tech Stack
-
-- React 19
-- Vite
-- Tailwind CSS
-- Lucide React Icons
-- Google Gemini AI API
-- Geoapify API (for location search)
-
-## Project Structure
-
-```
-src/
-├── App.jsx          # Main application component
-├── index.css        # Global styles
-└── main.jsx         # Application entry point
-```
-
-## API Integration
-
-The application integrates with:
-- **Google Gemini AI**: For generating travel itineraries
-- **Geoapify**: For destination search and autocomplete
-
-### Required API Keys
-
-1. **Gemini API Key** (Required)
-   - Get your key from: https://makersuite.google.com/app/apikey
-   - Set as: `VITE_GEMINI_API_KEY=your_key_here`
-
-2. **Geoapify API Key** (Optional but recommended)
-   - Get your key from: https://myprojects.geoapify.com/
-   - Set as: `VITE_GEOAPIFY_API_KEY=your_key_here`
-   - If not provided, the app will use a fallback API key
-
-## Troubleshooting
-
-### Common Issues
-
-**"Gemini API key is not configured" error**
-- Make sure you have created a `.env` file in the root directory
-- Verify that your API key is correctly set as `VITE_GEMINI_API_KEY=your_key_here`
-- Restart your development server after adding the environment variable
-
-**Destination autocomplete not working**
-- Check that your Geoapify API key is valid (if using custom key)
-- Verify the API key format: `VITE_GEOAPIFY_API_KEY=your_key_here`
-- Check browser console for Geoapify API errors
-- The app will fall back to popular destinations if the API fails
-
-**API Error 400/401/404**
-- Check that your Gemini API key is valid and active
-- Ensure you have sufficient quota for the Gemini API
-- Verify the API key format (should be a long string without spaces)
-- If you get a 404 error, the Gemini model may have been updated - check the latest API documentation
-
-**JSON Parse Error**
-- This usually indicates the AI returned malformed JSON
-- Try simplifying your request or try again
-- Check the browser console for detailed error information
-
-### Getting Help
-
-If you encounter any issues:
-1. Check the browser console for error messages
-2. Verify your environment variables are set correctly
-3. Ensure you have a valid Gemini API key
-4. Try restarting the development server
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+`npm run dev` · `npm run build` · `npm run preview` · `npm run lint`

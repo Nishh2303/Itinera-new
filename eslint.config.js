@@ -27,9 +27,13 @@ export default defineConfig([
         'error',
         {
           varsIgnorePattern: '^[A-Z_]',
-          argsIgnorePattern: '^_',
+          argsIgnorePattern: '^_|^[A-Z]',
         },
       ],
     },
+  },
+  {
+    files: ['vite.config.js', 'server/**/*.js', 'api/**/*.js'],
+    languageOptions: { globals: globals.node },
   },
 ]);
