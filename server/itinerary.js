@@ -172,17 +172,30 @@ export async function generateItinerary(body, { apiKey, model }) {
     );
   }
 
+  const itinerary = await callOpenAI({
+    apiKey,
+    model,
+    messages,
+    name: "itinerary",
+    schema: itinerarySchema,
+    maxTokens: 16000,
+  });
+  // Models don't always add up their own numbers; the breakdown is the source of truth.
+  for (const o of itinerary.options) {
+    o.estimated_total_cost = Object.values(o.cost_breakdown).reduce((a, b) => a + b, 0);
+  }
+  return { trip, itinerary };
+}
+
+async function callOpenAI({ apiKey, model, messages, name, schema, maxTokens }) {
   const res = await fetch(OPENAI_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
       model: model || DEFAULT_MODEL,
       messages,
-      max_completion_tokens: 16000,
-      response_format: {
-        type: "json_schema",
-        json_schema: { name: "itinerary", strict: true, schema: itinerarySchema },
-      },
+      max_completion_tokens: maxTokens,
+      response_format: { type: "json_schema", json_schema: { name, strict: true, schema } },
     }),
   });
 
@@ -197,21 +210,100 @@ export async function generateItinerary(body, { apiKey, model }) {
   if (choice?.finish_reason === "length") {
     throw new RequestError(502, "The plan was too long to finish. Try a shorter trip.");
   }
-  let itinerary;
   try {
-    itinerary = JSON.parse(choice.message.content);
+    return JSON.parse(choice.message.content);
   } catch {
     throw new RequestError(502, "The AI returned an unreadable response. Please try again.");
   }
-  // Models don't always add up their own numbers; the breakdown is the source of truth.
-  for (const o of itinerary.options) {
-    o.estimated_total_cost = Object.values(o.cost_breakdown).reduce((a, b) => a + b, 0);
-  }
-  return { trip, itinerary };
 }
 
-// Node (req, res) handler used by both the dev server and Vercel.
-export async function handleItineraryRequest(req, res, env) {
+// --- Form suggestions -------------------------------------------------------
+
+export const STYLE_IDS = ["Culture", "Food", "Adventure", "Nature", "Relaxation", "Spiritual", "Shopping", "Family"];
+
+const suggestSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["place_summary", "ideal_days", "season_note", "budget_tiers", "recommended_styles", "ideas"],
+  properties: {
+    place_summary: { type: "string" },
+    ideal_days: { type: "integer" },
+    season_note: { type: "string" },
+    budget_tiers: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["tier", "amount", "description"],
+        properties: {
+          tier: { type: "string", enum: ["Budget", "Comfort", "Premium"] },
+          amount: { type: "number" },
+          description: { type: "string" },
+        },
+      },
+    },
+    recommended_styles: { type: "array", items: { type: "string", enum: STYLE_IDS } },
+    ideas: { type: "array", items: { type: "string" } },
+  },
+};
+
+const SUGGEST_PROMPT = `You help a traveller fill in a trip-planning form. Given a destination and optional dates, travellers and currency, return:
+- place_summary: one sentence on what the place is known for.
+- ideal_days: a sensible trip length in days (1-14).
+- season_note: one sentence on weather and crowds for the given dates (or in general if no dates), including any festival or closure worth knowing.
+- budget_tiers: exactly three, in order Budget, Comfort, Premium. "amount" is a realistic TOTAL for the whole group and trip length, in the given currency, excluding flights to the destination, rounded to a clean number. "description" is under 10 words (e.g. "Hostels, street food, public transport").
+- recommended_styles: the 2-3 styles from the allowed list this place suits best.
+- ideas: 6 short, specific must-do items for this place (max 7 words each), e.g. "Sunset boat ride on Lake Pichola".`;
+
+export async function suggestForTrip(body, { apiKey, model }) {
+  if (!apiKey) throw new RequestError(500, "OPENAI_API_KEY is not configured on the server.");
+  const destination = str(body?.destination, 120);
+  if (destination.length < 2) throw new RequestError(400, "Destination is required.");
+  const currency = /^[A-Z]{3}$/.test(body?.currency ?? "") ? body.currency : "USD";
+  const travellers = Math.min(Math.max(Math.trunc(Number(body?.travellers)) || 1, 1), 50);
+  const start = isoDate(body?.startDate);
+  const end = isoDate(body?.endDate);
+  const days = start && end ? Math.round((Date.parse(end) - Date.parse(start)) / 86400000) + 1 : null;
+  const length = days >= 1 && days <= MAX_DAYS ? days : null;
+
+  return callOpenAI({
+    apiKey,
+    model,
+    name: "suggestions",
+    schema: suggestSchema,
+    maxTokens: 900,
+    messages: [
+      { role: "system", content: SUGGEST_PROMPT },
+      {
+        role: "user",
+        content: `Destination: ${destination}
+Dates: ${length ? `${start} to ${end} (${length} days)` : "not chosen yet; size budgets for your ideal_days"}
+Travellers: ${travellers}
+Currency: ${currency}`,
+      },
+    ],
+  });
+}
+
+// --- HTTP -------------------------------------------------------------------
+
+async function readJson(req) {
+  let body = req.body;
+  if (body === undefined) {
+    let raw = "";
+    for await (const chunk of req) {
+      raw += chunk;
+      if (raw.length > 300_000) throw new RequestError(413, "Request too large.");
+    }
+    body = raw ? JSON.parse(raw) : {};
+  } else if (typeof body === "string") {
+    body = JSON.parse(body);
+  }
+  return body;
+}
+
+// Wraps an action as a Node (req, res) handler, used by both the dev server and Vercel.
+export const createHandler = (action) => async (req, res, env) => {
   const send = (status, data) => {
     res.statusCode = status;
     res.setHeader("Content-Type", "application/json");
@@ -220,25 +312,17 @@ export async function handleItineraryRequest(req, res, env) {
   if (req.method !== "POST") return send(405, { error: "Method not allowed" });
 
   try {
-    let body = req.body;
-    if (body === undefined) {
-      let raw = "";
-      for await (const chunk of req) {
-        raw += chunk;
-        if (raw.length > 300_000) throw new RequestError(413, "Request too large.");
-      }
-      body = raw ? JSON.parse(raw) : {};
-    } else if (typeof body === "string") {
-      body = JSON.parse(body);
-    }
-    const result = await generateItinerary(body, {
+    const result = await action(await readJson(req), {
       apiKey: env.OPENAI_API_KEY,
       model: env.OPENAI_MODEL,
     });
     send(200, result);
   } catch (err) {
     if (err instanceof SyntaxError) return send(400, { error: "Invalid JSON body." });
-    console.error("[itinerary]", err);
+    console.error("[api]", err);
     send(err.status || 500, { error: err.status ? err.message : "Unexpected server error." });
   }
-}
+};
+
+export const handleItineraryRequest = createHandler(generateItinerary);
+export const handleSuggestRequest = createHandler(suggestForTrip);

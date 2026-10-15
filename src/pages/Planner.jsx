@@ -8,6 +8,7 @@ import { loadPlan, savePlan } from "../lib/storage.js";
 
 const emptyForm = {
   destination: "",
+  place: "",
   startDate: "",
   endDate: "",
   budget: "",
@@ -21,7 +22,7 @@ const prefill = () => {
   try {
     const d = sessionStorage.getItem("itinera:prefill");
     sessionStorage.removeItem("itinera:prefill");
-    return d ? { ...emptyForm, destination: d } : emptyForm;
+    return d ? { ...emptyForm, destination: d, place: d } : emptyForm;
   } catch {
     return emptyForm;
   }
@@ -65,7 +66,8 @@ export default function Planner() {
     const problem = validate(form);
     if (problem) return setError(problem);
     setPlan(null);
-    run({ trip: { ...form, budget: Number(form.budget) } }, "generating");
+    const { place, ...trip } = form;
+    run({ trip: { ...trip, destination: place || trip.destination.trim(), budget: Number(trip.budget) } }, "generating");
   };
 
   const refine = (refinement) => run({ trip: plan.trip, previous: plan.itinerary, refinement }, "refining");

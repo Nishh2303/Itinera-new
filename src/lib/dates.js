@@ -28,3 +28,21 @@ export const formatDate = (iso, opts = { day: "numeric", month: "short", year: "
 
 export const formatRange = (start, end) =>
   `${formatDate(start, { day: "numeric", month: "short" })} – ${formatDate(end)}`;
+
+// Quick date ranges offered under the date fields.
+export function quickRanges() {
+  const today = fromISO(todayISO());
+  const dow = today.getDay();
+  const sat = new Date(today);
+  sat.setDate(today.getDate() + ((6 - dow + 7) % 7));
+  const thisSat = toISO(sat);
+  const nextSat = addDays(thisSat, 7);
+  const firstOfNext = toISO(new Date(today.getFullYear(), today.getMonth() + 1, 1));
+  return [
+    { label: "This weekend", start: thisSat, end: addDays(thisSat, 1) },
+    { label: "Next weekend", start: nextSat, end: addDays(nextSat, 1) },
+    { label: "Long weekend", start: addDays(nextSat, -1), end: addDays(nextSat, 2) },
+    { label: "A week, in 2 weeks", start: addDays(toISO(today), 14), end: addDays(toISO(today), 20) },
+    { label: "Next month · 5 days", start: firstOfNext, end: addDays(firstOfNext, 4) },
+  ];
+}

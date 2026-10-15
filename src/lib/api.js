@@ -1,10 +1,15 @@
-export async function requestItinerary({ trip, previous, refinement }, signal) {
+export const requestItinerary = ({ trip, previous, refinement }, signal) =>
+  post("/api/itinerary", { trip, previous, refinement }, signal);
+
+export const requestSuggestions = (params, signal) => post("/api/suggest", params, signal);
+
+async function post(path, body, signal) {
   let res;
   try {
-    res = await fetch("/api/itinerary", {
+    res = await fetch(path, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ trip, previous, refinement }),
+      body: JSON.stringify(body),
       signal,
     });
   } catch (err) {
